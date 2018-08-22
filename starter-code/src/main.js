@@ -27,6 +27,7 @@ var cards = [
 
 $(document).ready(function(){
   var memoryGame = new MemoryGame(cards);
+  memoryGame.shuffleCards(memoryGame.cards);
   var html = '';
   memoryGame.cards.forEach(function (pic) {
     html += '<div class="card" data-card-name="'+ pic.name +'">';
@@ -40,7 +41,32 @@ $(document).ready(function(){
 
   // Bind the click event of each element to a function
   $('.back').click(function () {
-    // TODO: write some code here
+    $(this).toggle();
+    $(this).siblings().toggle();
+
+    memoryGame.pickedCards.push($(this));
+
+    if(memoryGame.pickedCards.length === 2) {
+      // memoryGame.parsClicked++;
+
+      $('.back').addClass("blocked"); 
+      if(memoryGame.checkIfPair(memoryGame.pickedCards[0], memoryGame.pickedCards[1]) !== true) {
+        
+        setTimeout(() => {
+        memoryGame.pickedCards[0].toggle() //front of card
+        memoryGame.pickedCards[0].siblings().toggle() //back of card
+        memoryGame.pickedCards[1].toggle() //front
+        memoryGame.pickedCards[1].siblings().toggle() //back
+        memoryGame.pickedCards = [];
+        $('.back').removeClass("blocked"); 
+      },800)
+    } else{
+        // memoryGame.pairsGuessed++;
+        memoryGame.pickedCards = [];
+        $('.back').removeClass("blocked");
+    }
+  }
+  memoryGame.updateScores();
   });
 });
 
